@@ -1,4 +1,4 @@
-FROM golang:1.14-alpine
+FROM golang:1.14-alpine AS builder
 
 # go modulesの設定
 ENV GO111MODULE on
@@ -14,6 +14,11 @@ RUN go mod download
 
 # ビルド
 RUN go build -o main
+
+# マルチステージビルド
+FROM alpine:3.11.6
+
+COPY --from=builder /go/src/app/main .
 
 # ./mainを実行
 CMD ["./main"]
